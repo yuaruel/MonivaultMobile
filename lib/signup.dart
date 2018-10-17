@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:monivault_mobile/app_config.dart';
+import 'package:monivault_mobile/app_utils.dart';
+import 'package:monivault_mobile/login.dart';
 import 'package:validate/validate.dart';
 import 'app_theme.dart';
 import 'welcome.dart';
@@ -32,7 +35,7 @@ class SignupContactState extends State<SignupContact>{
         color: Colors.white,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Padding(
@@ -64,6 +67,7 @@ class SignupContactState extends State<SignupContact>{
               ),
             ),
             Expanded(
+              flex: 2,
               child: Padding(
                 padding: const EdgeInsets.only(top: 40.0, left: 15.0, right: 15.0),
                 child: Form(
@@ -75,7 +79,7 @@ class SignupContactState extends State<SignupContact>{
                         controller: _phoneController,
                         decoration: InputDecoration(labelText: 'Phone Number'),
                         validator: (phoneValue){
-                          
+
                           try{
                             Validate.notBlank(phoneValue, 'Phone number is required');
                             Validate.matchesPattern(phoneValue, RegExp('\\d{11}'), 'Phone number is not valid');
@@ -96,22 +100,20 @@ class SignupContactState extends State<SignupContact>{
                           } on ArgumentError catch (err){
                             return err.message;
                           }
-                        },    
+                        },
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 25.0),
-                        child: RaisedButton(
-                            padding:
-                                const EdgeInsets.only(left: 65.0, right: 65.0),
-                            color: Colors.lightGreen,
-                            child: Text('Continue',
-                                style: TextStyle(fontSize: 17.0),
-                                textDirection: TextDirection.ltr),
-                            onPressed: () {
-                              //validate contact fields
-                              validateFormAndSubmit(context);
-                            }),
-                      )
+                      SizedBox(height: 25.0,),
+                      RaisedButton(
+                          padding:
+                          const EdgeInsets.only(left: 65.0, right: 65.0),
+                          color: Colors.lightGreen,
+                          child: Text('Continue',
+                              style: TextStyle(fontSize: 17.0),
+                              textDirection: TextDirection.ltr),
+                          onPressed: () {
+                            //validate contact fields
+                            validateFormAndSubmit(context);
+                          })
                     ],
                   ),
                 ),
@@ -128,43 +130,52 @@ class SignupContactState extends State<SignupContact>{
     );
   }
 
-  validateFormAndSubmit(BuildContext context){
+  validateFormAndSubmit(BuildContext context) async{
     var contactFormState = contactFormKey.currentState;
 
     if(contactFormState.validate()){
       contactFormState.save();
 
-      Future<int> statusCode = sendVerificationToken();
-      
-      statusCode.then((onValue){
-        if(onValue == 200){
-          var detailRoute = MaterialPageRoute<void>(
-            builder: (context) => SignupDetail(_emailController.text, _phoneController.text)
-          );
+      AppUtil.displayWait(context);
+      var appConfig = AppConfig.of(context);
 
-          Navigator.of(context).push(detailRoute);
+      StringBuffer verificationUrl = StringBuffer("${appConfig.apiBaseUrl}signupservice/verification-code?");
+      verificationUrl.write("phone=");
+      verificationUrl.write(_phoneController.text);
+      verificationUrl.write("&");
+      verificationUrl.write("email=");
+      verificationUrl.write(_emailController.text);
+
+      try {
+
+        var response = await http.post(verificationUrl.toString());
+
+        Navigator.pop(context);
+        if(response.statusCode == 200){
+            var detailRoute = MaterialPageRoute<void>(
+                builder: (context) => SignupDetail(_emailController.text, _phoneController.text)
+            );
+
+            Navigator.of(context).push(detailRoute);
+        }else if(response.statusCode == 400){
+          switch(response.body){
+            case 'duplicate-phone':
+              AppUtil.displayAlert("MoniVault", "Invalid phone number", context);
+              break;
+            case 'duplicate-email':
+              AppUtil.displayAlert("MoniVault", "Invalid email", context);
+              break;
+            default:
+              AppUtil.displayAlert("MoniVault", "Error sending verification code. Try again later!", context);
+          }
+        }else{
+          AppUtil.displayAlert("MoniVault", "Error sending verification code.", context);
         }
-      });
+
+      }catch(e){
+        AppUtil.displayAlert("MoniVault", "Unable to get verification code. Try again later!", context);
+      }
     }
-  }
-
-
-  Future<int> sendVerificationToken() async {
-    
-    StringBuffer verificationUrl = StringBuffer("http://10.0.2.2:8080/signupservice/verification-code?");
-    verificationUrl.write("phone=");
-    verificationUrl.write(_phoneController.text);
-    verificationUrl.write("&");
-    verificationUrl.write("email=");
-    verificationUrl.write(_emailController.text);
-
-    debugPrint("verificationcode url: " + verificationUrl.toString());
-    var response = await http.post(verificationUrl.toString());
-
-    debugPrint("response code: " + response.statusCode.toString());
-
-    return response.statusCode;
-
   }
 }
 
@@ -320,28 +331,41 @@ class SignupDetailState extends State<SignupDetail>{
     );
   }
 
-  validateFormAndSubmit(){
+  validateFormAndSubmit() async{
     
     if(_personalInfoFormKey.currentState.validate()){
-      createUserAccount();
+      AppUtil.displayWait(context);
+      var response = await createUserAccount();
+      Navigator.pop(context);
+
+      if(response.statusCode == 201){
+        await AppUtil.displayAlertAsync("MoniVault", "Your account has been created successfully!", context);
+
+        //Navigate to the login page
+        Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (BuildContext context){
+            return Login();
+          }
+        ));
+      }else{
+        AppUtil.displayAlert("MoniVault", "Unable to complete your registration. Please try again!", context);
+      }
     }
   }
 
-  createUserAccount() async {
+  Future<http.Response> createUserAccount() async {
+
+    var appConfig = AppConfig.of(context);
 
     var requestHeader = {'Content-Type': MediaType("application", "json").toString()};
     var requestBody = jsonEncode({'phone': _phone, 'email': _email, 'verificationCode': _verificationCodeController.text,
                 'username': _usernameController.text, 'password': _passwordController.text, 
                 'firstname': _firstNameController.text, 'lastname': _lastNameController.text });
-
-    debugPrint('the request body: ' + requestBody);
     
-    var response = await http.post("http://10.0.2.2:8080/signupservice/signup-account-holder", 
+    var response = await http.post("${appConfig.apiBaseUrl}signupservice/signup-account-holder",
           headers: requestHeader,
           body: requestBody);
 
-    debugPrint('response status code: ' + response.statusCode.toString());
-    debugPrint('response text: ' + response.body);
-    
+    return response;
   }
 }

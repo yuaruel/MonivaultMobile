@@ -10,7 +10,7 @@ class AirtimeVendor extends StatefulWidget{
 
 class AirtimeVendorState extends State<AirtimeVendor>{
 
-  var _airtimeVendor = 'airtel';
+  var _airtimeVendor = '';
 
   @override
   Widget build(BuildContext context) {
@@ -18,19 +18,23 @@ class AirtimeVendorState extends State<AirtimeVendor>{
       value: _airtimeVendor,
       items: [
         DropdownMenuItem<String>(
-          value: 'airtel',
+          value: '',
+          child: Text(''),
+        ),
+        DropdownMenuItem<String>(
+          value: 'AIRT',
           child: Text('Airtel'),
         ),
         DropdownMenuItem<String>(
-          value: 'mtn',
+          value: 'MTN',
           child: Text('MTN'),
         ),
         DropdownMenuItem<String>(
-          value: 'glo',
+          value: 'Glo',
           child: Text('Glo'),
         ),
         DropdownMenuItem<String>(
-          value: '9mobile',
+          value: 'ETST',
           child: Text('9Mobile'),
         )
       ],

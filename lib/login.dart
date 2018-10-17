@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:monivault_mobile/app_config.dart';
+import 'package:monivault_mobile/app_utils.dart';
 import 'welcome.dart';
 import 'app_theme.dart';
 import 'package:validate/validate.dart';
@@ -153,7 +154,8 @@ class LoginState extends State<Login> {
       }else{
         //Failed login. Throw a notification dialog.
         debugPrint('an error occurred while trying to login');
-        Navigator.pop(context);
+
+        AppUtil.displayAlert("Login Error", "Invalid Username or password", context);
       }
 
     }
@@ -177,7 +179,7 @@ class LoginState extends State<Login> {
 
     String apiUrl = signinParam.toString();
 
-    http.Response response = null;
+    http.Response response;
     try {
       response = await http.post(apiUrl, headers: requestHeader);
     }catch(e, s){

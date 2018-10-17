@@ -93,11 +93,7 @@ class HomeAppState extends State<HomeApp>{
                   Navigator.pop(context);
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (BuildContext context){
-                      if(Platform.isAndroid){
-                        return AndroidPinRedeem();
-                      }else if(Platform.isIOS){
-                        return IosPinRedeem();
-                      }
+                      return PinRedeem();
                     }
                   ));
                 },
