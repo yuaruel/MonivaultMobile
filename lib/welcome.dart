@@ -5,7 +5,6 @@ class Welcome extends StatelessWidget{
 
   @override
     Widget build(BuildContext context) {
-      // TODO: implement build
       return new Container(
         color: Colors.white,
         child: new Column(

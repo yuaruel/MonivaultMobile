@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:monivault_mobile/air_time.dart';
 import 'package:monivault_mobile/air_time_vendors.dart';
 import 'package:monivault_mobile/app_config.dart';
+import 'package:monivault_mobile/recent_transactions.dart';
 import 'package:monivault_mobile/redeem_pin_android.dart';
 import 'package:monivault_mobile/redeem_pin_ios.dart';
 import 'package:monivault_mobile/transfer.dart';
@@ -51,7 +52,6 @@ class HomeAppState extends State<HomeApp>{
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
 
     appConfig = AppConfig.of(context);
@@ -61,8 +61,6 @@ class HomeAppState extends State<HomeApp>{
 
   @override
     Widget build(BuildContext context) {
-
-      // TODO: implement build
       return new Scaffold(
         appBar: new AppBar(
           title: new Text('MoniVault', textDirection: TextDirection.ltr,),
@@ -172,7 +170,13 @@ class HomeAppState extends State<HomeApp>{
                     alignment: Alignment.bottomCenter,
                     padding: const EdgeInsets.only(bottom: 45.0),
                     child: FlatButton(
-                      onPressed: (){},
+                      onPressed: (){
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (BuildContext context){
+                              return RecentTransaction();
+                            })
+                        );
+                      },
                       child: Text('Recent Transactions', style: TextStyle(fontSize: 20.0),),
                       textColor: Colors.blueAccent,
                     ),

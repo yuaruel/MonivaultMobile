@@ -13,7 +13,6 @@ import 'package:http_parser/http_parser.dart';
 class SignupContact extends StatefulWidget {
   @override
     State<StatefulWidget> createState() {
-      // TODO: implement createState
       return SignupContactState();
     }
 }
@@ -28,7 +27,6 @@ class SignupContactState extends State<SignupContact>{
 
     @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Material(
       child: Container(
         padding: const EdgeInsets.all(0.0),
@@ -188,7 +186,6 @@ class SignupDetail extends StatefulWidget {
 
   @override
     State<StatefulWidget> createState() {
-      // TODO: implement createState
       return SignupDetailState(_email, _phone);
     }
 }
@@ -209,7 +206,6 @@ class SignupDetailState extends State<SignupDetail>{
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Material(
       child: Container(
         padding: const EdgeInsets.all(0.0),

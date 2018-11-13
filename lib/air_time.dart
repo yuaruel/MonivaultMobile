@@ -107,8 +107,8 @@ class AirtimeState extends State<Airtime>{
                     String stringValue = AppUtil.unformatCurrency(amountValue);
 
                     var numValue = double.parse(stringValue);
-                    if(numValue.remainder(1000) > 0){
-                      throw ArgumentError('Amount should be a multiple of 1,000');
+                    if(numValue.remainder(100) > 0){
+                      throw ArgumentError('Amount should be a multiple of N1,00');
                     }
 
                   }on ArgumentError catch(e){
