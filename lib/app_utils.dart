@@ -11,6 +11,7 @@ class AppUtil{
   static final editCurrencyFormatter = intl.NumberFormat.currency(locale: "en-GB", name: "NGN", symbol: "N", decimalDigits: 0);
 
   static String unformatCurrency(String currentCurrency){
+
     return currentCurrency.substring(1).replaceAll(',', '').trim();
   }
 

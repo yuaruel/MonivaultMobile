@@ -148,6 +148,8 @@ class LoginState extends State<Login> {
 
         Navigator.of(context).pushReplacement(homePageRoute);
       }else{
+        debugPrint(response.body);
+        debugPrint('status code: ' + response.statusCode.toString());
         //Failed login. Throw a notification dialog.
         debugPrint('an error occurred while trying to login');
 
@@ -159,7 +161,8 @@ class LoginState extends State<Login> {
 
   Future<http.Response> signinUser(String apiBaseUrl) async {
 
-    StringBuffer signinParam = StringBuffer(apiBaseUrl + "/oauth/token?");
+    debugPrint(apiBaseUrl);
+    StringBuffer signinParam = StringBuffer(apiBaseUrl + "oauth/token?");
     signinParam.write("grant_type=password&");
     signinParam.write("username=");
     signinParam.write(_usernameController.text);
@@ -174,6 +177,7 @@ class LoginState extends State<Login> {
     var requestHeader = {"Authorization": "Basic " + base64Str};
 
     String apiUrl = signinParam.toString();
+    debugPrint(apiUrl);
 
     http.Response response;
     try {

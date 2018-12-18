@@ -107,8 +107,8 @@ class AirtimeState extends State<Airtime>{
                     String stringValue = AppUtil.unformatCurrency(amountValue);
 
                     var numValue = double.parse(stringValue);
-                    if(numValue.remainder(100) > 0){
-                      throw ArgumentError('Amount should be a multiple of N1,00');
+                    if(numValue < 100){
+                      throw ArgumentError('Amount should not be a less than N100.00');
                     }
 
                   }on ArgumentError catch(e){
@@ -156,7 +156,9 @@ class AirtimeState extends State<Airtime>{
 
     var platformSpecific = Platform.isAndroid ? 'Android' : 'iOS';
 
-    var requestData = {'productCode': _airtimeVendor, 'airtimeAmount': '${_airtimeAmount.toString()}0', 'phoneNumber': _phoneNo,
+    var airtimeValue = _airtimeAmount.toInt();
+    debugPrint('airtime amount: $airtimeValue');
+    var requestData = {'productCode': _airtimeVendor, 'airtimeAmount': '${_airtimeAmount.toInt()}', 'phoneNumber': _phoneNo,
                       'requestOriginatingPlatform': 'Mobile', 'platformSpecific': platformSpecific};
 
     AppUtil.displayWait(context);

@@ -16,7 +16,7 @@ void main(){
     );
   }else if(Platform.isIOS){
     appConfig = AppConfig(
-      apiBaseUrl: 'http://127.0.0.1:8080',
+      apiBaseUrl: 'http://127.0.0.1:8080/',
       apiV1Base: 'http://127.0.0.1:8080/api/v1/',
       child: MyApp(),
     );

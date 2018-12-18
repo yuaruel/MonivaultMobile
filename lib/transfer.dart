@@ -125,6 +125,9 @@ class TransferState extends State<Transfer>{
                   validator: (commentValue){
                     try{
                       Validate.notBlank(commentValue);
+                      if(commentValue.length > 240){
+                        throw ArgumentError("Maximum of 240 characters");
+                      }
                     }on ArgumentError catch(e){
                       return e.message;
                     }
