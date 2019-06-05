@@ -167,7 +167,6 @@ class TransferState extends State<Transfer>{
 
     var transferData = {'amount': _amount.toString(), 'transferChannel': _transferChannel, 'comment': _comment, 'platform': 'Mobile'};
 
-    debugPrint("transfer data: $transferData");
     try {
 
       showDialog(
@@ -184,8 +183,6 @@ class TransferState extends State<Transfer>{
       //Remove Wait dialog box.
       Navigator.of(context).pop();
 
-      debugPrint('transfer response: ${response.body}');
-      debugPrint('http status code: ${response.statusCode}');
       if(response.statusCode == 200) {
         Navigator.pushReplacement(context, MaterialPageRoute(
             builder: (BuildContext context) {

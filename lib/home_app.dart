@@ -55,8 +55,11 @@ class HomeAppState extends State<HomeApp>{
     super.didChangeDependencies();
 
     appConfig = AppConfig.of(context);
+    debugPrint('about to fetch balances...');
     fetchBalanceDetail();
+    debugPrint('fetched balance detail...');
     fetchInterestDetail();
+    debugPrint('fetched interest detail...');
   }
 
   @override
@@ -265,6 +268,7 @@ class HomeAppState extends State<HomeApp>{
       var responseBody = json.decode(response.body);
 
       setState(() {
+
         _interestAccrued = currencyFormat.format(currencyFormat.parse(responseBody['accruedInterest']));
         _payoutDate = responseBody['payoutDate'];
         _payoutTotal = currencyFormat.format(currencyFormat.parse(responseBody['totalPayout']));

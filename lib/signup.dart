@@ -274,6 +274,21 @@ class SignupDetailState extends State<SignupDetail>{
                         },
                       ),
                       TextFormField(
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(labelText: 'Confirm Password'),
+                        obscureText: true,
+                        validator: (confirmPassword){
+                          try{
+                            Validate.notBlank(confirmPassword);
+                            if(confirmPassword != _passwordController.text){
+                              return "Password does not match";
+                            }
+                          }on ArgumentError catch(err){
+                            return err.message;
+                          }
+                        },
+                      ),
+                      TextFormField(
                         controller: _firstNameController,
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(labelText: 'First Name'),

@@ -140,8 +140,6 @@ class LoginState extends State<Login> {
               
         MaterialPageRoute homePageRoute = MaterialPageRoute(
           builder: (BuildContext contex) {
-            debugPrint('loginResponse: ' + loginResponse.toString());
-            debugPrint('account id: ' + loginResponse['accountId']);
             return HomeApp(loginResponse['firstName'], loginResponse['lastName'], loginResponse['accountId']);
           }
         );

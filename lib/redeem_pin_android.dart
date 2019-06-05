@@ -22,6 +22,8 @@ class PinRedeemState extends State<PinRedeem>{
   var _pinFormKey = GlobalKey<FormState>();
   var _pin = '';
   var _comment = '';
+  var _pinController = TextEditingController();
+  var _commentController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +44,7 @@ class PinRedeemState extends State<PinRedeem>{
                 Text('Enter your PIN in the box below'),
                 SizedBox(height: 35.0),
                 TextFormField(
+                  controller: _pinController,
                   decoration: InputDecoration(
                       hintText: 'OneCard PIN',
                       border: OutlineInputBorder(),
@@ -63,18 +66,19 @@ class PinRedeemState extends State<PinRedeem>{
                   height: 25.0,
                 ),
                 TextFormField(
+                  controller: _commentController,
                   maxLines: 3,
                   decoration: InputDecoration(
                       hintText: 'Comment',
                       border: OutlineInputBorder()
                   ),
-                  validator: (commentValue){
+                  /*validator: (commentValue){
                     try{
                       Validate.notBlank(commentValue, 'Comment is required');
                     }on ArgumentError catch(e){
                       return e.message;
                     }
-                  },
+                  },*/
                   onSaved: (commentValue){
                     _comment = commentValue;
                   },
@@ -112,13 +116,17 @@ class PinRedeemState extends State<PinRedeem>{
     var appConfig = AppConfig.of(context);
 
     var platformSpecific = Platform.isAndroid ? 'Android' : 'iOS';
-    var requestData = {'pin': _pin, 'oneCardComment': _comment, 'platform': 'Mobile',
+    var requestData = {'pin': _pinController.text, 'oneCardComment': _commentController.text, 'platform': 'Mobile',
                         'platformSpecific' : platformSpecific, 'type': 'One Card PIN Redeem'};
     
     var response = await http.post('${appConfig.apiV1Base}depositService/make-one-card-deposit', headers: appConfig.authorizationHeader, body: requestData);
 
     if(response.statusCode == 200){
+      AppUtil.displayAlert('Success', 'Your PIN Redeem was successful!', context);
 
+      //Clear the input fields
+      _pinController.text = '';
+      _commentController.text = '';
     }else{
       var errorBody = jsonDecode(response.body);
       AppUtil.displayAlert('PIN Redeem Error', errorBody['apiResponse'], context);
